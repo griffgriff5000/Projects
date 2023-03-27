@@ -1,0 +1,189 @@
+# volume factor calculator
+def calculate_volume_factor(volume):
+    if 0 <= volume <= 20:
+        return 1.350
+    elif 21 <= volume <= 25:
+        return 1.350
+    elif 26 <= volume <= 50:
+        return 1.300
+    elif 51 <= volume <= 75:
+        return 1.150
+    elif 76 <= volume <= 100:
+        return 1.000
+    elif 101 <= volume <= 150:
+        return 0.950
+    elif 151 <= volume <= 200:
+        return 0.915
+    elif 201 <= volume <= 400:
+        return 0.900
+    else:
+        return 0.900
+
+# area calculator
+def calculate_area(length, width, decks):
+    area = length * width * decks
+    return area
+
+# building norm check
+def check_building_in_list(value, building, building_norm):
+    if value in building:
+        return building_norm
+    else:
+        return None
+
+
+# Check scaffold type and get corresponding norm
+def check_scaffold_type(scaffold_type, volume):
+    if scaffold_type == "Independent standing scaffold":
+        if volume < 20:
+            volume = 20
+        return 0.180
+    elif scaffold_type == "Suspended/Bridging Scaffold":
+        if volume < 20:
+            volume = 20
+        return 0.360
+    elif scaffold_type == "Cantilever Scaffold":
+        if volume < 20:
+            volume = 20
+        return 0.330
+    elif scaffold_type == "Flooring":
+        return 0.140
+    elif scaffold_type == "Moveable/Rolling Scaffold":
+        if volume < 20:
+            volume = 20
+        return 0.230
+    elif scaffold_type == "Staircase":
+        return 0.360
+    elif scaffold_type == "Frost Screens" or scaffold_type == "Frost Screens Detached" or scaffold_type == "Scaffolding Tent":
+        if volume < 20:
+            volume = 20
+        return 0.180
+    elif scaffold_type == "Scaffolding Covers" or scaffold_type == "System Covers":
+        return 0.290
+    elif scaffold_type == "Scaffolding Foil":
+        return 0.260
+    else:
+        return None
+
+
+# Get level factor
+def get_level_factor(level):
+    if level > 30:
+        return 1.800
+    elif 24 <= level <= 30:
+        return 1.500
+    elif 18 <= level < 24:
+        return 1.300
+    elif 12 <= level < 18:
+        return 1.200
+    elif 6 <= level < 12:
+        return 1.100
+    elif -1.5 < level < 6:
+        return 1.000
+    elif -3 < level <= -1.5:
+        return 1.050
+    elif -6 < level <= -3:
+        return 1.100
+    elif -9 < level <= -6:
+        return 1.150
+    elif -12 < level <= -9:
+        return 1.200
+    elif -15 < level <= -12:
+        return 1.250
+    else:
+        return 1.300
+
+# list work out
+building = [1, 2, 3, 4, 5]
+value = 3
+building_norm = 42
+result = check_building_in_list(value, building, building_norm)
+if result is not None:
+    print(f"The building {value} is in the list. The building factor is {result}.")
+
+# Size of scaffol (in Hi-Vis will be the boxes set for this)
+scaffold_length = 2
+scaffold_width = 2
+scaffold_height = 3
+scaffold_decks = 1
+scaffold_type =  "Independent standing scaffold"
+
+# level factor
+scaffold_level = 40
+level_factor = get_level_factor(scaffold_level)
+
+# work out 
+scaffold_volume = scaffold_length * scaffold_width * scaffold_height
+volume_factor = calculate_volume_factor(scaffold_volume)
+scaffold_area = calculate_area(scaffold_length, scaffold_width, scaffold_decks)
+
+# Calling the check_scaffold_type() function
+scaffold_type_factor = check_scaffold_type(scaffold_type, scaffold_volume)
+
+# This is a print out section for the console, not necessary for Hi-Vis
+print(f" The volume of the Scaffold is {scaffold_volume}m3. ")
+print(f" The area of the scaffold is {scaffold_area}m2. ")
+print(f" Number of  Decks: {scaffold_decks}")
+print(f" You are building on level {scaffold_level}m, your factor is {level_factor}")
+print(f" The volume factor is {volume_factor}")
+print(f" Scaffold Type: {scaffold_type}, Scaffold Type Factor: {scaffold_type_factor}")
+print ("------------------------------------------------------------------------------------------------------")
+# Additional factors
+additional_factors = {
+    "Enclosed space": 1.500,
+    "Dusk mask": 1.000,
+    "High temp": 1.200,
+    "Breathing apparatus": 1.700,
+    "Chemical suit": 2.000,
+    "Congestion": 1.100,
+}
+
+# Get user input for additional factors
+def get_user_input_for_factors():
+    user_factors = []
+    print("Added factors:")
+    simulated_user_responses = {
+        "Enclosed space": "no",
+        "Dusk mask": "no",
+        "High temp": "no",
+        "Breathing apparatus": "no",
+        "Chemical suit": "no",
+        "Congestion": "no",
+    }
+    for factor_name, user_response in simulated_user_responses.items():
+        print(f"{factor_name}: {user_response}")
+        if user_response.lower() == "yes":
+            user_factors.append(additional_factors[factor_name])
+    return user_factors
+
+
+# Calculate the product of the factors
+def multiply_factors(factors_list):
+    product = 1
+    for factor in factors_list:
+        product *= factor
+    return product
+
+
+# Contract factor 
+contract_factor = 1.280
+
+# total hours to erect (from your initial script)
+total_hours = (scaffold_volume * volume_factor + scaffold_area + building_norm) * level_factor * scaffold_type_factor
+
+# Get user input
+user_factors = get_user_input_for_factors()
+
+# Calculate the product of user factors
+user_factors_product = multiply_factors(user_factors)
+
+# Update total hours to erect with additional factors
+total_hours *= user_factors_product
+
+comp_rate = 52
+# Update total cost with additional factors
+total_cost = total_hours * comp_rate
+print ("------------------------------------------------------------------------------------------------------")
+# Round total Cost
+rounded_total_cost = round(total_cost, 2)
+print(f" Total cost:  £{rounded_total_cost}")
